@@ -1,7 +1,7 @@
 import os
 from os.path import abspath, dirname, join
 from datetime import datetime
-# from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv, find_dotenv
 
 from flask import (Flask, redirect, render_template, url_for, abort, flash, jsonify)
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -14,7 +14,7 @@ from oauth import OAuthSignIn
 
 
 # Load the environment variables for development
-# load_dotenv(find_dotenv())
+load_dotenv(find_dotenv())
 
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///bazaar.db')
 
