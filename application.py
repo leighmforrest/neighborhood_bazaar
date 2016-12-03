@@ -1,7 +1,7 @@
 import os
 from os.path import abspath, dirname, join
 from datetime import datetime
-from dotenv import load_dotenv, find_dotenv
+# from dotenv import load_dotenv, find_dotenv -> commented out for deployment
 
 from flask import (Flask, redirect, render_template, url_for,
                    abort, flash, jsonify)
@@ -14,13 +14,12 @@ from wtforms.validators import DataRequired
 from oauth import OAuthSignIn
 
 
-# Load the environment variables
-load_dotenv(find_dotenv())
+# Load the environment variables for development
+#load_dotenv(find_dotenv())
 
-_cwd = dirname(abspath(__file__))
+SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///bazaar.db')
 
 SECRET_KEY = os.environ['SECRET_KEY']
-SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///' + join(_cwd, 'flask-tracking.db'))
 WTF_CSRF_SECRET_KEY = 'this-should-be-more-random'
 
 
