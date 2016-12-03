@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta charset="utf-8">
     <title>Neighborhood Bazaar</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css')}}">
     <link href="https://fonts.googleapis.com/css?family=Lato|Yatra+One" rel="stylesheet">
     <script src="https://use.fontawesome.com/73cb95c3cd.js"></script>
@@ -39,7 +39,7 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
               {% if current_user.is_authenticated %}
-              <li><a href="#">{{ url_for('logout')}}</a></li>
+              <li><a href="{{ url_for('logout')}}">Logout</a></li>
               {% else %}
               <li><a href="{{ url_for('login')}}">Login</a></li>
               {% endif%}
@@ -48,16 +48,18 @@
         </div><!-- /.container-fluid -->
         </nav>
       <!-- Flash messaging -->
-      {% with messages = get_flashed_messages() %}
-          {% if messages %}
-          <ul class="flash">
-              {% for message in messages %}
-                  <li><strong>{{ message }}</strong></li>
-              {% endfor %}
-          {% endif %}
-      {% endwith %}
+      <div class="flash">
+          {% with messages = get_flashed_messages() %}
+              {% if messages %}
+              <ul class="flash">
+                  {% for message in messages %}
+                      <li><strong>{{ message }}</strong></li>
+                  {% endfor %}
+              {% endif %}
+          {% endwith %}
           </ul>
-      <main>
+      </div>
+      <main class="container-fluid">
           {% block content %}
           {% endblock %}
       </main>

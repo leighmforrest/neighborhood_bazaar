@@ -1,9 +1,11 @@
 {%extends 'base.html' %}
 {% block content %}
-    <div class="item">
+  <div class="row">
+    <div class="item col-sm-6 col-sm-offset-3">
       <h2>{{ item.name }}</h2>
       <p><strong>{{ item.category.name }}</strong></p>
       <p>{{ item.description }}</p>
       <p><strong>Lister:</strong>{{ item.user.nickname }}</p>
     </div>
+  </div>
 {% endblock%}

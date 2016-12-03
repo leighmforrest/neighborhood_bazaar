@@ -1,30 +1,31 @@
 {% extends 'base.html' %}
 {% block content %}
-  <div class="categories">
-    <h2>Categories</h2>
-    <ul>
-          {% for category in categories %}
-            <li><a href="/category/{{category.id }}">{{category.name }}</a>
-            {% if category.user == current_user %}
-                <a href="/category/{{category.id }}/edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-                <a href="/category/{{category.id }}/delete"><i class="fa fa-trash" aria-hidden="true"></i></a>
-            {% endif %}
-            </li>
-          {% endfor %}
-    </ul>
-  </div>
-  <div class="items">
-    <h2>Items</h2>
-    <ul>
-        {% for item in items %}
+  <div class="row">
+    <div class="col-sm-3">
+      <h3>Categories</h3>
+      <ul>
+      {% for category in categories %}
           <li>
-            <a href="/item/{{ item.id }}">{{ item.name }}</a>({{ item.category }})
-            {% if item.user == current_user %}
-                <a href="/item/{{ item.id }}/edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-                <a href="/item/{{ item.id }}/delete"><i class="fa fa-trash" aria-hidden="true"></i></a>
+            <a href="{{ url_for('show_category', category_id=category.id)}}">{{ category.name }}</a>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('edit_category', category_id=category.id)}}">edit</a>
+            <a href="{{ url_for('delete_category', category_id=category.id)}}">delete</a>
             {% endif %}
           </li>
-        {% endfor %}
-    </ul>
-{% endblock %}
-</div>
+      {% endfor %}
+      </ul>
+    </div>
+    <div class="col-sm-9">
+      <h3>Items</h3>
+      {% for item in items %}
+          <li>
+              <a href="{{ url_for('show_item', item_id=item.id)}}">{{ item.name }}</a>
+              {% if current_user.is_authenticated %}
+              <a href="{{ url_for('edit_item', item_id=item.id)}}">Edit</a>
+              <a href="{{ url_for('delete_item', item_id=item.id)}}">Delete</a>
+              {% endif %}
+          </li>
+      {% endfor %}
+    </div>
+  </div>
+  {% endblock %}

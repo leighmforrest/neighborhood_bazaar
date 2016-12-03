@@ -1,20 +1,15 @@
-{%extends 'base.html' %}
+{% extends 'base.html' %}
 {% block content %}
-    <div class="category">
-      <h2>{{ category.name }}</h2>
+  <div class="row">
+    <div class="col-sm-3">
+      <h3>{{ category.name }}</h3>
       <p>{{ category.description }}</p>
     </div>
-
-    <div class="items">
-        <h2>Items</h2>
-        {% if items.count() %}
-        <ul>
-            {% for item in items %}
-              <li><a href="/item/{{ item.id }}">{{ item.name }}</a></li>
-            {% endfor %}
-        </ul>
-        {% else %}
-            <p><strong>There are no items!</strong></p>
-        {% endif%}
+    <div class="col-sm-9">
+      <h3>Items</h3>
+      {% for item in items %}
+          <li><a href="{{ url_for('show_item', item_id=item.id)}}">{{ item.name }}</a></li>
+      {% endfor %}
     </div>
-{% endblock%}
+  </div>
+  {% endblock %}
