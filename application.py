@@ -20,7 +20,7 @@ load_dotenv(find_dotenv())
 _cwd = dirname(abspath(__file__))
 
 SECRET_KEY = os.environ['SECRET_KEY']
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + join(_cwd, 'flask-tracking.db')
+SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///' + join(_cwd, 'flask-tracking.db'))
 WTF_CSRF_SECRET_KEY = 'this-should-be-more-random'
 
 
