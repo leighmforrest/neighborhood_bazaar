@@ -16,7 +16,7 @@ from oauth import OAuthSignIn
 # Load the environment variables for development
 # load_dotenv(find_dotenv())
 
-SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///bazaar.db')
+SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
 SECRET_KEY = os.environ['SECRET_KEY']
 WTF_CSRF_SECRET_KEY = 'this-should-be-more-random'
