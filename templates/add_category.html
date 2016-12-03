@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Hai!</h1>
+    <form action="/category/new" method="post">
+        {{ form.csrf_token }}
+        {{ form.name.label }}{{ form.name }}
+        {{ form.description.label }}{{ form.description}}
+        <input type="submit" name="Submit">
+    </form>
+{% endblock %}

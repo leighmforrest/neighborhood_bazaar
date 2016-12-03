@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form method="post" action="/item/{{ item.id }}/edit">
+        {{ form.csrf_token }}
+        {{ form.name.label }} {{ form.name(size=20) }}
+        <br>
+        {{ form.description.label }} {{ form.description() }}
+        <br>
+        {{ form.category.label }}{{ form.category() }}
+        <br>
+        <input type="submit" value="Submit"><a href="/">Cancel</a>
+    </form>
+{% endblock %}

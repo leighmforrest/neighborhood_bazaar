@@ -1,0 +1,20 @@
+{%extends 'base.html' %}
+{% block content %}
+    <div class="category">
+      <h2>{{ category.name }}</h2>
+      <p>{{ category.description }}</p>
+    </div>
+
+    <div class="items">
+        <h2>Items</h2>
+        {% if items.count() %}
+        <ul>
+            {% for item in items %}
+              <li><a href="/item/{{ item.id }}">{{ item.name }}</a></li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p><strong>There are no items!</strong></p>
+        {% endif%}
+    </div>
+{% endblock%}

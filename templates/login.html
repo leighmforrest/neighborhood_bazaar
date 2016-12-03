@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+  <p class="login"><a href="{{ url_for('oauth_authorize', provider='facebook') }}"><i class="fa fa-facebook-official" aria-hidden="true"></i>
+Login with Facebook</a></p>
+  <!--p><a href="{{ url_for('oauth_authorize', provider='google') }}">Login with Google</a></p-->
+{% endblock %}
