@@ -3,7 +3,7 @@
 <form method="POST" action="/category/{{category.id }}/delete">
 {{ form.csrf_token }}
 <h3>Are you sure you want to delete {{ category.name }}?</h3>
-<button type="button" class="btn btn-danger">Delete</button>
+{{ form.delete }}
 <a class="btn btn-primary" href="/category">Cancel</a>
 </form>
 {% endblock %}

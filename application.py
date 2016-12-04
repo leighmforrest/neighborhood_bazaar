@@ -16,7 +16,8 @@ from oauth import OAuthSignIn
 # Load the environment variables for development
 load_dotenv(find_dotenv())
 
-SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL','sqlite:///bazaar.db')
+# SQLAlchemy database string. If no environment variable, use sqlite database.
+SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///bazaar.db')
 
 SECRET_KEY = os.environ['SECRET_KEY']
 WTF_CSRF_SECRET_KEY = 'this-should-be-more-random'
@@ -38,6 +39,7 @@ lm.login_view = 'login'
 
 
 class User(UserMixin, db.Model):
+    """How the user is modeled in the database. Gets info from Facebook."""
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     social_id = db.Column(db.String(64), nullable=False, unique=True)
@@ -46,23 +48,28 @@ class User(UserMixin, db.Model):
 
 
 class Category(db.Model):
+    """The Category model."""
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     description = db.Column(db.Text)
 
+    # User relationship.
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship('User', backref=db.backref(
         'category_users', lazy='dynamic'))
 
     def __init__(self, name, description):
+        """Initialize the entity with name and description."""
         self.name = name
         self.description = description
 
     def __str__(self):
+        """String representation of category."""
         return "{}".format(self.name)
 
     @property
     def serialize(self):
+        """The json representation of a category."""
         return {
             'id': self.id,
             'name': self.name,
@@ -71,24 +78,29 @@ class Category(db.Model):
 
 
 class Item(db.Model):
+    """How an item is modeled."""
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     description = db.Column(db.Text)
     pub_date = db.Column(db.DateTime)
 
+    # Category Foreign Key relationship.
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     category = db.relationship('Category', backref=db.backref(
         'items', lazy='dynamic'))
 
+    # User Foreign Key Relationship.
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship('User', backref=db.backref(
         'item_users', lazy='dynamic'))
 
     def __str__(self):
-        return "<Item: {}".format(self.name)
+        """String representation of an item."""
+        return "Item: {}".format(self.name)
 
     @property
     def serialize(self):
+        """json representation of an item."""
         return {
             'name': self.name,
             'description': self.description,
@@ -99,6 +111,7 @@ class Item(db.Model):
 
 @lm.user_loader
 def load_user(id):
+    """Load the user in Login Manager."""
     return User.query.get(int(id))
 
 
@@ -110,22 +123,27 @@ def get_categories():
 
 
 class DeleteCategoryForm(FlaskForm):
+    """Form to delete a category."""
     delete = fields.SubmitField('Delete')
 
 
 class DeleteItemForm(FlaskForm):
+    """Form to delete an item."""
     delete = fields.SubmitField('Delete')
 
 
 class ItemForm(FlaskForm):
+    """Form to add an item."""
     name = fields.StringField('name', validators=[DataRequired()])
     description = fields.TextAreaField('description')
     category = fields.SelectField(u'Category', coerce=int)
 
 
 class CategoryForm(FlaskForm):
+    """Form to add a category."""
     name = fields.StringField('name', validators=[DataRequired()])
     description = fields.TextAreaField('description')
+
 
 # Main Routes
 def is_owner(entity, current_user):
@@ -135,6 +153,7 @@ def is_owner(entity, current_user):
 
 @app.route('/')
 def index():
+    """The homepage."""
     categories = Category.query.all()
     items = Item.query.all()
     return render_template("index.html", categories=categories, items=items)
@@ -143,7 +162,7 @@ def index():
 @app.route('/category/new', methods=('GET', 'POST'))
 @login_required
 def add_category():
-    user = current_user
+    """Add a category."""
     form = CategoryForm()
     if form.validate_on_submit():
         category = Category(form.name.data, form.description.data)
@@ -158,6 +177,7 @@ def add_category():
 @app.route('/category/<int:category_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_category(category_id):
+    """Edit a category."""
     category = Category.query.get(category_id)
     if not is_owner(category, current_user):
         abort(404)
@@ -176,6 +196,7 @@ def edit_category(category_id):
 @app.route('/category/<int:category_id>/delete', methods=['GET', 'POST'])
 @login_required
 def delete_category(category_id):
+    """Delete a category."""
     category = Category.query.get_or_404(category_id)
     if not is_owner(category, current_user):
         abort(404)
@@ -187,10 +208,15 @@ def delete_category(category_id):
         flash(message)
         return redirect('/')
     else:
-        return render_template('delete_category.html', category=category, form=form)
+        return render_template(
+            'delete_category.html',
+            category=category,
+            form=form)
+
 
 @app.route('/category/<int:category_id>')
 def show_category(category_id):
+    """Show a category, and it's items."""
     category = Category.query.get(category_id)
     items = Item.query.filter_by(category=category)
     return render_template('category.html', category=category, items=items)
@@ -199,6 +225,7 @@ def show_category(category_id):
 @app.route('/item/new', methods=('GET', 'POST'))
 @login_required
 def add_item():
+    """Add item to app."""
     form = ItemForm()
     form.category.choices = get_categories()
     if form.validate_on_submit():
@@ -219,7 +246,9 @@ def add_item():
 @app.route('/item/<int:item_id>/edit', methods=('GET', 'POST'))
 @login_required
 def edit_item(item_id):
+    """Edit an item."""
     item = Item.query.get_or_404(item_id)
+    # If it doesn't belong to the user, 404
     if not is_owner(item, current_user):
         abort(404)
     form = ItemForm(obj=item)
@@ -234,8 +263,10 @@ def edit_item(item_id):
         return redirect(url_for("index"))
     return render_template("edit_item.html", form=form, item=item)
 
+
 @app.route('/item/<int:item_id>')
 def show_item(item_id):
+    """Display an item and its data."""
     item = Item.query.get_or_404(item_id)
     return render_template('item.html', item=item)
 
@@ -243,7 +274,9 @@ def show_item(item_id):
 @app.route('/item/<int:item_id>/delete', methods=['GET', 'POST'])
 @login_required
 def delete_item(item_id):
+    """Delete an item."""
     item = Item.query.get_or_404(item_id)
+    # If item does not belong to the owner, 404
     if not is_owner(item, current_user):
         abort(404)
     form = DeleteCategoryForm()
@@ -260,11 +293,13 @@ def delete_item(item_id):
 # OAUTH Routes
 @app.route('/login')
 def login():
+    """The login page."""
     return render_template('login.html')
 
 
 @app.route('/logout')
 def logout():
+    """Logout function."""
     message = "User logged off successfully!"
     logout_user()
     flash(message)
@@ -273,6 +308,7 @@ def logout():
 
 @app.route('/authorize/<provider>')
 def oauth_authorize(provider):
+    """Authorize the user."""
     if not current_user.is_anonymous:
         return redirect(url_for('index'))
     oauth = OAuthSignIn.get_provider(provider)
@@ -281,6 +317,7 @@ def oauth_authorize(provider):
 
 @app.route('/callback/<provider>')
 def oauth_callback(provider):
+    """Handles the authenticated user."""
     if not current_user.is_anonymous:
         return redirect(url_for('index'))
     oauth = OAuthSignIn.get_provider(provider)
@@ -289,6 +326,7 @@ def oauth_callback(provider):
         flash('Authentication failed.')
         return redirect(url_for('index'))
     user = User.query.filter_by(social_id=social_id).first()
+    # If user does not exist, get his/her data into the database.
     if not user:
         user = User(social_id=social_id, nickname=username, email=email)
         db.session.add(user)
@@ -297,17 +335,21 @@ def oauth_callback(provider):
     flash("Facebook user \"{}\" logged in!".format(user.nickname))
     return redirect(url_for('index'))
 
+
 # JSON Endpoints
 @app.route('/item/json')
 def items_json():
+    """Returns a json representation of all items in app."""
     items = Item.query.all()
     return jsonify(Items=[i.serialize for i in items])
 
 
 @app.route('/category/json')
 def categories_json():
+    """Returns a json representation of all categories in app."""
     categories = Category.query.all()
     return jsonify(Categories=[i.serialize for i in categories])
+
 
 if __name__ == '__main__':
 
