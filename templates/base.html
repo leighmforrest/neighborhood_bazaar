@@ -32,7 +32,7 @@
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
               {% if current_user.is_authenticated %}
-              <li class="active"><a href="#">Home <span class="sr-only">(current)</span></a></li>
+              <li class="active"><a href="/">Home <span class="sr-only">(current)</span></a></li>
               <li><a href="{{ url_for('add_category')}}">Add Category</a></li>
               <li><a href="{{ url_for('add_item')}}">Add Item</a></li>
               {% endif %}
@@ -48,10 +48,10 @@
         </div><!-- /.container-fluid -->
         </nav>
       <!-- Flash messaging -->
-      <div class="flash">
+      <div class="message">
           {% with messages = get_flashed_messages() %}
               {% if messages %}
-              <ul class="flash">
+              <ul class="flash alert-success">
                   {% for message in messages %}
                       <li><strong>{{ message }}</strong></li>
                   {% endfor %}

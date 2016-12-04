@@ -1,12 +1,18 @@
 /* Set default styling */
 body {
   font-size: 16px;
+  font-family: 'Lato', sans-serif;
+  background-color: #ffe6ae;
 }
 
 /* NO LIST IN THE APPLICATION HAS BULLETS! */
 ul > li {
   list-style-type: none;
   font-size: 2rem;
+}
+
+a, p {
+  color: #5e4d5b;
 }
 
 /* Form Styling NOTE: ALL FORMS HAVE UNIFORM STYLING */
@@ -38,4 +44,35 @@ form > select {
     border-radius: 4px;
     background-color: #f1f1f1;
     margin-left: 5px;
+}
+
+.navbar-header .navbar-brand {
+  font-family: 'Yatra One', sans-serif;
+  color: #F29A57;
+  font-size: 2.6rem;
+}
+
+.navbar-header .navbar-brand, .navbar-header .navbar-brand > a:hover {
+    color: #F29A57;
+}
+
+.navbar-default {
+    background-color: #b82843;
+    border-color: #e7e7e7;
+    color: #f29a57;
+}
+
+.navbar-default .navbar-nav>li>a, .navbar-default .navbar-nav>li>a:hover {
+    color: #f29a57;
+}
+
+.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover {
+    color: #b82843;
+    background-color: #ffe6ae;
+}
+
+
+.alert-success {
+  width:75%;
+  margin: 0 auto;
 }
