@@ -3,7 +3,8 @@ from os.path import abspath, dirname, join
 from datetime import datetime
 from dotenv import load_dotenv, find_dotenv
 
-from flask import (Flask, redirect, render_template, url_for, abort, flash, jsonify)
+from flask import (Flask, redirect, render_template, url_for,
+                   abort, flash, jsonify)
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from flask_login import (LoginManager, UserMixin, login_user, logout_user,
@@ -180,8 +181,8 @@ def edit_category(category_id):
     """Edit a category."""
     category = Category.query.get(category_id)
     if not is_owner(category, current_user):
-        abort(404)
-
+        flash("Category can only be updated by its owner.")
+        return redirect("/")
     user = current_user
     form = CategoryForm(obj=category)
     if form.validate_on_submit():
@@ -199,7 +200,8 @@ def delete_category(category_id):
     """Delete a category."""
     category = Category.query.get_or_404(category_id)
     if not is_owner(category, current_user):
-        abort(404)
+        flash("Category can only be deleted by user.")
+        redirect("/")
     form = DeleteCategoryForm()
     if form.validate_on_submit():
         message = "Category {} deleted!".format(category.name)
@@ -250,7 +252,8 @@ def edit_item(item_id):
     item = Item.query.get_or_404(item_id)
     # If it doesn't belong to the user, 404
     if not is_owner(item, current_user):
-        abort(404)
+        flash("Item can only be edited by its owner.")
+        return redirect("/")
     form = ItemForm(obj=item)
     form.category.choices = get_categories()
     if form.validate_on_submit():
@@ -278,7 +281,8 @@ def delete_item(item_id):
     item = Item.query.get_or_404(item_id)
     # If item does not belong to the owner, 404
     if not is_owner(item, current_user):
-        abort(404)
+        flash("Item can only be deleted by its owner.")
+        return redirect('/')
     form = DeleteCategoryForm()
     if form.validate_on_submit():
         message = "Item \"{}\" deleted!".format(item.name)
@@ -349,6 +353,13 @@ def categories_json():
     """Returns a json representation of all categories in app."""
     categories = Category.query.all()
     return jsonify(Categories=[i.serialize for i in categories])
+
+
+@app.route('/item/<int:item_id>/json')
+def item_json(item_id):
+    """Returns a json representation of an item."""
+    item = Item.query.get_or_404(item_id)
+    return jsonify(Item=item.serialize)
 
 
 if __name__ == '__main__':
